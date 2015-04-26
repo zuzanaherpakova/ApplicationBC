@@ -5,7 +5,7 @@ library(arulesViz)
 
 shinyUI(pageWithSidebar(
   
-  headerPanel(h3("Aplikácia pre vizualizáciu medicínskych dát")),
+  headerPanel("Aplikácia pre vizualizáciu medicínskych dát"),
   
     sidebarPanel(
       
@@ -146,7 +146,8 @@ shinyUI(pageWithSidebar(
                          p(HTML('Som študentkou tretieho ročníka odboru <a>Hosopodárska informatika</a>, 
                                 Fakulta elektrotechniky a informatiky, Technická univerzita v Košiciach.')),
                          p('Cieľom mojej bakalárskej práce bolo vytvoriť aplikáciu pre podporu rozhodovania v medicínskej oblasti. 
-                           Táto aplikácia je určená lekárom, výskumným pracovníkom a zdravotnému personálu. 
+                           Táto aplikácia je primárne určená pre lekárov, výskumných pracovníkov a  iný zdravotný personál, 
+         ale aj pre používateľov pracujúci mimo tejto oblasti.
                            Aplikácia poskytuje možnosť načítania vlastných dát alebo použitia pripravených vzorových dát. 
                            Po načítaní dát aplikácia umožňuje vizualizáciu dát prostredníctvom grafov(boxplot a barplot) 
                            a dolovanie asociačných pravidiel v týchto načítaných medicínskych dátach.')
