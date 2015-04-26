@@ -1,20 +1,21 @@
-library(ggplot2)
+llibrary(ggplot2)
 library(shiny)
 library(arules)
 library(arulesViz)
+
+#mojedata<-read.csv("diabetes.csv", sep=";", header=TRUE,fileEncoding = "UTF-8")
+
 shinyServer(function(input,output, session){
   observe({
    if(input$dataInput==1){
       if(input$sampleData==1){
-        mojedata<-read.delim("diabetes.csv", sep=";", header=TRUE)
+        mojedata<-read.table("diabetes.csv", sep=";", header=TRUE, fileEncoding = "utf8")
         updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
-        #nums <- sapply(mojedata, is.numeric),
-        #mojedata[ , nums]
         updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
        updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
        updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
      } else {
-       mojedata<-read.delim("hepatitis.csv", sep=";", header=TRUE)
+       mojedata<-read.table("hepatitis.csv", sep=";", header=TRUE,fileEncoding = "utf8")
        updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
        updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
        updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
@@ -23,12 +24,12 @@ shinyServer(function(input,output, session){
     }
     else 
     if(input$dataInput==2){
-      inFile <- input$file1
+      inFile <- input$file(fileEncoding = "utf8")
       if (is.null(inFile))  {return(NULL)
       }
 
     #NACITANIE TABULKY A UPDATOVANIE PARAMETROV#
-    mojedata=read.delim(inFile$datapath, header=input$header, sep=input$sep)
+    mojedata=read.table(inFile$datapath, header=input$header, sep=input$sep,fileEncoding = "UTF-8")
     updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
     updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
     updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
@@ -67,7 +68,7 @@ shinyServer(function(input,output, session){
   #stiahnutie grafu
   output$down<- downloadHandler(
     filename=function(){
-      paste(input$plotvolba,'.pdf', sep='')
+      paste(input$plotvolba,'.pdf', sep='',fileEncoding = "utf8")
     },
     content=function(file){
       pdf(file)
