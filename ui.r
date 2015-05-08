@@ -115,9 +115,9 @@ shinyUI(pageWithSidebar(
     conditionalPanel(
       condition="input.tabs=='ASOCIAČNÉ PRAVIDLÁ'",
       h5('Asociačne pravidlá'),
-    numericInput("z", "Počet zobrazených asociačných pravidiel:", 3),
-    numericInput("s", "Hranica minimálnej podpory:", 0.2),
-    numericInput("c", "Hranica minimálnej spoľahlivosti:", 0.8),
+      numericInput("z", "Počet zobrazených asociačných pravidiel:", 3),
+      numericInput("s", "Hranica minimálnej podpory:", 0.2, min=0, max=1, step=0.1),
+      numericInput("c", "Hranica minimálnej spoľahlivosti:", 0.8, min=0, max=1, step=0.1),
     br(),
     br(),
     wellPanel(
@@ -177,9 +177,9 @@ shinyUI(pageWithSidebar(
             h4('VYSVETLENIE POJMOV'),           
             p(h6('Základné štatistické ukazovatele')),
             HTML('Medzi základné štatistické ukazovatele, 
-             ktoré ďalej používame na zobrazenie krabicového grafu sú 
-            <a>minimum</a>, ktorý predstavuje najmenšiu hodnotu a
-            <a>maximum</a>, ktorý predstavuje najväčšiu hodnotu z daného intervalu čísel,
+             ktoré ďalej používame na zobrazenie krabicového grafu sú:
+           <a>minimum</a>, ktoré predstavuje najmenšiu hodnotu;
+            <a>maximum</a>, ktoré predstavuje najväčšiu hodnotu z daného intervalu čísel;
             <a>medián</a> ako stredná hodnota čísel zoradených od najmenšieho po najväčší,
             <a>priemer</a> ako stredná hodnota vypočítaná zo súčtu všetkých hodnôt, ktorý je vydelený ich počtom a
               <a>kvantil</a> súboru, ktorý je vyjadrený ako hodnota k-tej časti, ak je súbor rozdelený na n rovnakých častí. 
@@ -187,17 +187,33 @@ shinyUI(pageWithSidebar(
           
                        
           p(h6('Krabicový graf'), 
-          ('V deskriptívnej štatistike sa krabicový graf alebo krabicový diagram
+          HTML('V deskriptívnej štatistike sa <a>krabicový graf</a> alebo krabicový diagram
          používa ako jeden zo spôsobov grafickej vizualizácie dát pomocou ich kvartilov.
-         Stredná časť diagramu je zhora ohraničená 3.kvartilom, zospodu 1.kvartilom
-         a medzi nimi sa nachádza medián.')),
-          
+         Stredná časť diagramu(krabička) je zhora(pri vertikálnom zobrazení zprava) ohraničená 3.kvartilom, 
+        zospodu(pri vertikálnom zobrazení zľava) 1.kvartilom
+          a medzi nimi sa nachádza medián. 
+          Ďalšie čiary nachádzajúce sa pod(vľavo) krabicou znázorňujú minimálnu hodnotu a čiara nad(vpravo) krabicou
+        ukazuje na osi maximálnu hodnotu pre parameter, ktorý bol zvolený používateľom.')),
+    
         
          p(h6('Stĺpcový graf'), 
-          ('Stĺpcový graf(ang. barplot) alebo histogram je tvorený obdĺžnikmi, 
+          HTML('<a>Stĺpcový graf</a>(ang. barplot) alebo histogram je tvorený obdĺžnikmi, 
           ktorých základne (os "x") majú dĺžku zvolených intervalov, 
          a ktorých výšky (os "y") majú veľkosť príslušných absolútnych 
          alebo relatívnych početností zvolených tried.')),
+         
+         p(h6('Asociačné pravidlá'), 
+          HTML ('Asociačné pravidlá sú výsledkom jednej z metód dolovania v dátach. 
+            Daný algoritmus nájde z množiny údajov fekventované množiny a z nich následne odvodí asociačné pravidlá.
+                Asociačné pravidlá sú aj nástrojom na tzv. analýzu nákupného košíka. V tomto zmysle sú vysvetlené aj nasledujúce pojmy.'),
+          br(),
+          HTML('<a> Asociačné pravidlo</a>  je definované ako implikácia X=> Y, pričom X a Y sú dve disjunktné podmnožiny univerzálnej množiny.'),
+          br(),
+          HTML('<a> Podpora</a>  je to, koľkokrát sa v databáze nachádzajú všetky položky v jedom košíku vydelené počtom všetkých košíkov.'),
+          br(),
+          HTML('<a> Spoľahlivosť</a>  je podiel, kde v čitateli je počet košíkov, ktoré keď obsahujú X, 
+    tak do nich patrí aj Y a v menovateli je počet všetkých takých transakcií, ktoré obsahujú X.')),
+         
         ('___________________________________________________________________________________'),
          
          
@@ -209,7 +225,19 @@ shinyUI(pageWithSidebar(
       
         h6('Ako správne zvoliť premmenné pre zobrazenie grafu?'),
         ('Pre správne zobrazenie krabicového grafu je potrebné vybrať ako prvú 
-        premennú údaj typu "int"(numerická premenná) a druhú premennú typu "factor" (symbolická premenná).')
+        premennú údaj typu "int"(numerická premenná) a druhú premennú typu "factor" (symbolická premenná). 
+          Táto aplikácia je navrhnutá tak,že používateľ si už vyberá iba z parametrov, ktoré sú vhodné pre zobrazenie.'),
+       
+       
+       h6('Ako rozumiem výsledku asociačných pravidiel?'),
+       HTML('Asociačné pravidlo v tvare napr. {Unava=ano, Anorexia=ano} => {Nevolnost=ano} pre hranici podpory 0.3538462 a hranici spoľahlivosti 1 znamená,
+            že z daných údajov o pacientoch algoritmus našiel pravidlo, že pacienti, ktorí boli unavení a majú anorexiu sa prejavuje nevoľnoť s 
+            danou hranicou podpory a spoľahlivosti.'),
+    br(),
+    br(),
+    br()
+       
+
               
      ),
     tabPanel("DOTAZNÍK",textOutput('dotaznik'),
