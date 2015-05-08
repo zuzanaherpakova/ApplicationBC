@@ -1,4 +1,4 @@
-llibrary(ggplot2)
+library(ggplot2)
 library(shiny)
 library(arules)
 library(arulesViz)
@@ -9,17 +9,26 @@ shinyServer(function(input,output, session){
   observe({
    if(input$dataInput==1){
       if(input$sampleData==1){
-        mojedata<-read.table("diabetes.csv", sep=";", header=TRUE, fileEncoding = "utf8")
-        updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
-        updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
+        mojedata<-read.delim("diabetes.csv", sep=";", header=TRUE)
+        typeCols <- sapply(mojedata, class)
+        factCols <- grep('factor', typeCols)
+        subM <- mojedata[,factCols]
+        subM2 <- mojedata[,-factCols]
+        updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(subM2) [1:ncol(subM2)])
+        updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)])
+        updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
+        updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(subM) [1:ncol(subM)])
+     } 
+     else if(input$sampleData==2) {
+       mojedata<-read.delim("hepatitis.csv", sep=";", header=TRUE)
+       typeCols <- sapply(mojedata, class)
+       factCols <- grep('factor', typeCols)
+       subM <- mojedata[,factCols]
+       subM2 <- mojedata[,-factCols]
+       updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(subM2) [1:ncol(subM2)])
+       updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)])
        updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
-       updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
-     } else {
-       mojedata<-read.table("hepatitis.csv", sep=";", header=TRUE,fileEncoding = "utf8")
-       updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
-       updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
-       updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
-       updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
+       updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(subM) [1:ncol(subM)])
     }
     }
     else 
@@ -29,11 +38,15 @@ shinyServer(function(input,output, session){
       }
 
     #NACITANIE TABULKY A UPDATOVANIE PARAMETROV#
-    mojedata=read.table(inFile$datapath, header=input$header, sep=input$sep,fileEncoding = "UTF-8")
-    updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
-    updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
+    mojedata=read.delim(inFile$datapath, header=input$header, sep=input$sep)
+    typeCols <- sapply(mojedata, class)
+    factCols <- grep('factor', typeCols)
+    subM <- mojedata[,factCols]
+    subM2 <- mojedata[,-factCols]
+    updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(subM2) [1:ncol(subM2)])
+    updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)])
     updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
-    updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)], names(mojedata)[[1]])
+    updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(subM) [1:ncol(subM)])
     }
     #ZOBRAZENIE TABULKY#
     output$tabulka <- renderDataTable(mojedata)
@@ -100,9 +113,10 @@ shinyServer(function(input,output, session){
   
   output$textToPrint1<- renderText({ 
     if (values1$shouldShow)
-      ('Používa sa pre grafickú vizualizáciu dát pomocou ich kvartilov.
-          Stredná časť diagramu je zhora ohraničená 3.kvartilom, zospodu 1.kvartilom
-    a medzi nimi sa nachádza medián.')
+      ('Boxplot alebo aj krabicový graf sa používa pre vizualizáciu dát pomocou ich kvartilov.
+          Stredná časť diagramu(krabička) je zhora(zprava) ohraničená 3.kvartilom, zospodu(zľava) 1.kvartilom
+    a medzi nimi sa nachádza medián. Ďalšia čiara nachádzajúca sa pod krabicou znázorňuje minimálnu hodnotu a nad krabicou maximálnu hodnotu pre zvolený parameter. 
+       Viac v záložke INFO.')
   })
   
   #NAPOVEDA PRE BARPLOT#
@@ -123,7 +137,8 @@ shinyServer(function(input,output, session){
       ('Stĺpcový graf(ang. barplot) alebo histogram je tvorený obdĺžnikmi, 
           ktorých základne (os "x") majú dĺžku zvolených intervalov, 
          a ktorých výšky (os "y") majú veľkosť príslušných absolútnych 
-         alebo relatívnych početností zvolených tried.')
+         alebo relatívnych početností zvolených tried.
+       Viac v záložke INFO.')
   })
   
   output$uiButton2 <- renderUI({
@@ -144,7 +159,7 @@ asociacne<-function(support, confidence){
   factCols <- grep('factor', typeCols)
   subM <- mojedata[,factCols]
   mojedata <- as(subM, "transactions")
-  asociacne <- apriori(mojedata, parameter=list(support=input$s, confidence=input$c))
+  asociacne <- apriori(mojedata, parameter=list(support=input$s, confidence=input$c, maxlen=4))
 }
  
  output$graf3<- renderPlot({
