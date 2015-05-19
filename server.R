@@ -3,13 +3,14 @@ library(shiny)
 library(arules)
 library(arulesViz)
 
+
 #mojedata<-read.csv("diabetes.csv", sep=";", header=TRUE,fileEncoding = "UTF-8")
 
 shinyServer(function(input,output, session){
   observe({
    if(input$dataInput==1){
       if(input$sampleData==1){
-        mojedata<-read.delim("diabetes.csv", sep=";", header=TRUE)
+        mojedata<-read.delim("diabetes.csv", sep=";", header=TRUE, fileEncoding = "UTF-8")
         typeCols <- sapply(mojedata, class)
         factCols <- grep('factor', typeCols)
         subM <- mojedata[,factCols]
@@ -18,9 +19,10 @@ shinyServer(function(input,output, session){
         updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)])
         updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
         updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(subM) [1:ncol(subM)])
-     } 
+      }
+     
      else if(input$sampleData==2) {
-       mojedata<-read.delim("hepatitis.csv", sep=";", header=TRUE)
+       mojedata<-read.delim("hepatitis.csv", sep=";", header=TRUE, fileEncoding = "UTF-8")
        typeCols <- sapply(mojedata, class)
        factCols <- grep('factor', typeCols)
        subM <- mojedata[,factCols]
@@ -31,26 +33,24 @@ shinyServer(function(input,output, session){
        updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(subM) [1:ncol(subM)])
     }
     }
-    else 
-    if(input$dataInput==2){
-      inFile <- input$file(fileEncoding = "utf8")
-      if (is.null(inFile))  {return(NULL)
-      }
-
+    else if(input$dataInput==2){
+      inFile <- input$file1
+      if (is.null(inFile))  
+        return(NULL)
     #NACITANIE TABULKY A UPDATOVANIE PARAMETROV#
-    mojedata=read.delim(inFile$datapath, header=input$header, sep=input$sep)
+    mojedata=read.delim(inFile$datapath, header=input$header, sep=input$sep, fileEncoding = "UTF-8")
     typeCols <- sapply(mojedata, class)
     factCols <- grep('factor', typeCols)
-    subM <- mojedata[,factCols]
-    subM2 <- mojedata[,-factCols]
+   subM <- mojedata[,factCols]
+   subM2 <- mojedata[,-factCols]
     updateSelectInput(session, "y", "Vyber prvý parameter:", colnames(subM2) [1:ncol(subM2)])
     updateSelectInput(session, "x", "Vyber druhý parameter:", colnames(mojedata) [1:ncol(mojedata)])
     updateSelectInput(session, "a", "Vyber prvý parameter:", colnames(mojedata) [1:ncol(mojedata)])
     updateSelectInput(session, "b", "Vyber druhý parameter:", colnames(subM) [1:ncol(subM)])
     }
     #ZOBRAZENIE TABULKY#
-    output$tabulka <- renderDataTable(mojedata)
-  
+   output$tabulka <- renderDataTable(mojedata)
+   
   #SUMMARY#
   output$summary <- renderPrint({
     if(input$sumarVolba==1){
