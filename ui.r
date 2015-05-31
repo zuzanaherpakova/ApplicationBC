@@ -117,7 +117,11 @@ shinyUI(pageWithSidebar(
       h5('Asociačne pravidlá'),
       numericInput("z", "Počet zobrazených asociačných pravidiel:", 3),
       numericInput("s", "Hranica minimálnej podpory:", 0.2, min=0, max=1, step=0.1),
+      bsTooltip(id="s", title="Môže sa pohybovať v hranici od 0 do 1. Čím je nižšie číslo, tým viacej pravidiel nájde", 
+      placement="right", trigger="hover"),
       numericInput("c", "Hranica minimálnej spoľahlivosti:", 0.8, min=0, max=1, step=0.1),
+       bsTooltip(id="c", title="Môže sa pohybovať v hranici od 0 do 1. Čím je nižšie číslo, tým viacej pravidiel nájde", 
+        placement="right", trigger="hover"),
     br(),
     br(),
     wellPanel(
